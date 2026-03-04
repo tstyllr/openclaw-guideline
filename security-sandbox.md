@@ -169,7 +169,7 @@ openclaw gateway restart
 第四步：验证沙盒是否生效
 
 ```bash
-openclaw sandbox explain
+openclaw sandbox explain --agent xiaoshu
 ```
 
 看到 mode: all + runtime: docker 就说明沙盒已经开启。
