@@ -9,7 +9,7 @@ openclaw agents add qianqian --workspace ~/.openclaw/workspace-qianqian
 ## 新增telegram channel
 
 ```bash
-openclaw channels add --channel telegram --token 8722315882:AAEqHLHvCtKdhCeIg9h5U0JPEitybEh9Mzg --account qianqian
+openclaw channels add --channel telegram --token xxx --account qianqian
 ```
 
 ## Agent 绑定 channel （手动）

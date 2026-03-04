@@ -3,7 +3,9 @@
 
 📦 第一步：安装飞书插件
 
+```bash
 openclaw plugins install @openclaw/feishu
+```
 
 ───
 
@@ -21,29 +23,35 @@ openclaw plugins install @openclaw/feishu
 
 进入 权限管理 → 批量导入，粘贴以下 JSON：
 
+```json
 {
-"scopes": {
-"tenant": [
-"aily:file:read",
-"aily:file:write",
-"application:application.app_message_stats.overview:readonly",
-"application:application:self_manage",
-"application:bot.menu:write",
-"contact:user.employee_id:readonly",
-"corehr:file:download",
-"event:ip_list",
-"im:chat.access_event.bot_p2p_chat:read",
-"im:chat.members:bot_access",
-"im:message",
-"im:message.group_at_msg:readonly",
-"im:message.p2p_msg:readonly",
-"im:message:readonly",
-"im:message:send_as_bot",
-"im:resource"
-],
-"user": ["aily:file:read", "aily:file:write", "im:chat.access_event.bot_p2p_chat:read"]
+  "scopes": {
+    "tenant": [
+      "aily:file:read",
+      "aily:file:write",
+      "application:application.app_message_stats.overview:readonly",
+      "application:application:self_manage",
+      "application:bot.menu:write",
+      "contact:user.employee_id:readonly",
+      "corehr:file:download",
+      "event:ip_list",
+      "im:chat.access_event.bot_p2p_chat:read",
+      "im:chat.members:bot_access",
+      "im:message",
+      "im:message.group_at_msg:readonly",
+      "im:message.p2p_msg:readonly",
+      "im:message:readonly",
+      "im:message:send_as_bot",
+      "im:resource"
+    ],
+    "user": [
+      "aily:file:read",
+      "aily:file:write",
+      "im:chat.access_event.bot_p2p_chat:read"
+    ]
+  }
 }
-}
+```
 
 ───
 
@@ -60,56 +68,60 @@ openclaw plugins install @openclaw/feishu
 
 编辑 ~/.openclaw/openclaw.json，添加飞书 channel 配置，并将 xiaoshu agent 绑定：
 
+```json
 {
-"channels": {
-"telegram": {
-"enabled": true,
-"dmPolicy": "pairing",
-"groupPolicy": "allowlist",
-"streaming": "off",
-"proxy": "http://127.0.0.1:7890",
-"accounts": {
-"main": {
-"botToken": "8795807834:AAH4WVKr5TOda4CfSPCayiq-bEXHS_eZm-E"
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist",
+      "streaming": "off",
+      "proxy": "http://127.0.0.1:7890",
+      "accounts": {
+        "main": {
+          "botToken": "xxx"
+        }
+      }
+    },
+    "feishu": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "accounts": {
+        "xiaoshu": {
+          "appId": "xxx",
+          "appSecret": "xxx",
+          "botName": "小书"
+        }
+      }
+    }
+  },
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "telegram",
+        "accountId": "main"
+      }
+    },
+    {
+      "agentId": "xiaoshu",
+      "match": {
+        "channel": "feishu",
+        "accountId": "xiaoshu"
+      }
+    }
+  ]
 }
-}
-},
-"feishu": {
-"enabled": true,
-"dmPolicy": "pairing",
-"accounts": {
-"xiaoshu": {
-"appId": "cli_a916eb7902ba5cb1",
-"appSecret": "QkjHYxeHvkQGNH0ANwp0zfbUBxEWewzz",
-"botName": "小书"
-}
-}
-}
-},
-"bindings": [
-{
-"agentId": "main",
-"match": {
-"channel": "telegram",
-"accountId": "main"
-}
-},
-{
-"agentId": "xiaoshu",
-"match": {
-"channel": "feishu",
-"accountId": "xiaoshu"
-}
-}
-]
-}
+```
 
 ───
 
 🚀 第六步：启动 Gateway
 
+```bash
 openclaw gateway restart
 openclaw gateway status
+```
 
 确认 gateway 正在运行后，继续下一步。
 
