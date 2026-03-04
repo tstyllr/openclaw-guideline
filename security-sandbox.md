@@ -181,3 +181,58 @@ openclaw sandbox list
 ```
 
 ───
+
+## 自动销毁容器
+
+───
+
+默认销毁规则（源码确认）
+
+```js
+DEFAULT_SANDBOX_IDLE_HOURS = 24; // 闲置超24小时 → 销毁
+DEFAULT_SANDBOX_MAX_AGE_DAYS = 7; // 存在超7天 → 销毁
+```
+
+prune 逻辑每 5 分钟检查一次（HOT_CONTAINER_WINDOW_MS = 300s），满足任一条件就会 docker rm -f 容器。
+
+───
+
+如何禁止自动销毁？
+
+将两者都设为 0 即可完全禁用：
+
+```json
+// ~/.openclaw/openclaw.json
+{
+  "agents": {
+    "defaults": {
+      "sandbox": {
+        "prune": {
+          "idleHours": 0, // 0 = 禁用空闲清理
+          "maxAgeDays": 0 // 0 = 禁用最大年龄清理
+        }
+      }
+    }
+  }
+}
+```
+
+也可以针对特定 agent 单独设置（注意：scope=shared 时 per-agent prune 配置会被忽略，统一用全局配置）：
+
+```json
+// ~/.openclaw/openclaw.json
+{
+  "agents": {
+    "list": [
+      {
+        "id": "my-agent",
+        "sandbox": {
+          "prune": { "idleHours": 0, "maxAgeDays": 0 }
+        }
+      }
+    ]
+  }
+}
+```
+
+───
