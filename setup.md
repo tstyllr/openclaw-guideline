@@ -3,13 +3,13 @@
 ## 新增agent
 
 ```bash
-openclaw agents add qianqian --workspace ~/.openclaw/workspace-qianqian
+openclaw agents add xiao-niu --workspace ~/.openclaw/workspace-xiao-niu
 ```
 
 ## 新增telegram channel
 
 ```bash
-openclaw channels add --channel telegram --token xxx --account qianqian
+openclaw channels add --channel telegram --token xxx --account xiao-niu
 ```
 
 ## Agent 绑定 channel （手动）
