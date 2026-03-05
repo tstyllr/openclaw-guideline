@@ -14,9 +14,8 @@ openclaw channels add --channel telegram --token xxx --account qianqian
 
 ## Agent 绑定 channel （手动）
 
-在openclaw.json第一层（和agents并列）中添加：
-
 ```json
+// ~/.openclaw/openclaw.json
 {
   "bindings": [
     {
@@ -41,9 +40,10 @@ openclaw channels add --channel telegram --token xxx --account qianqian
 
 用 openclaw onboard 授权新的大模型提供商
 
-授权后，可以在openclaw.json > agents > defaults > models 中添加支持的大模型：
+授权后，添加支持的大模型：
 
 ```json
+// ~/.openclaw/openclaw.json
 {
   "models": {
     "anthropic/claude-opus-4-6": {},
@@ -72,4 +72,26 @@ openclaw config set agents.defaults.memorySearch.provider "local"
 openclaw memory index --verbose
 # 第三步：
 openclaw memory search "今天发生了什么" --agent main
+```
+
+## 群聊
+
+```json
+// ~/.openclaw/openclaw.json
+{
+  "channels": {
+    "feishu": {
+      "groupPolicy": "allowlist",
+      // Feishu group IDs (chat_id) look like: oc_xxx
+      "groupAllowFrom": ["oc_xxx"],
+      "groups": {
+        "oc_xxx": {
+          // Feishu user IDs (open_id) look like: ou_xxx
+          "allowFrom": ["ou_user1", "ou_user2"],
+          "requireMention": false
+        }
+      }
+    }
+  }
+}
 ```
