@@ -95,3 +95,103 @@ openclaw memory search "今天发生了什么" --agent main
   }
 }
 ```
+
+## 心跳
+
+最简配置：
+
+```json
+// ~/.openclaw/openclaw.json
+{
+  "agents": {
+    "defaults": {
+      "heartbeat": {
+        "every": "30m", // 改这里，0m = 禁用
+        "target": "last"
+      }
+    }
+  }
+}
+```
+
+every 支持的格式：
+
+- "15m" → 每 15 分钟
+- "1h" → 每 1 小时
+- "0m" → 禁用心跳
+
+target 的三类选项：
+
+| 值         | 效果                           |
+| ---------- | ------------------------------ |
+| "last"     | 发到最近使用的渠道（默认值）   |
+| "none"     | 只运行，不发任何消息（纯后台） |
+| 指定渠道名 | 发到固定渠道                   |
+
+指定渠道名的可选值：
+
+- "telegram"
+- "whatsapp"
+- "discord"
+- "slack"
+- "signal"
+- "imessage"
+- "googlechat"
+- "msteams"
+
+指定渠道时还可以加 to 参数指定具体收件人：
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "heartbeat": {
+        "every": "30m",
+        "target": "telegram",
+        "to": "123456789" // Telegram chat ID
+      }
+    }
+  }
+}
+```
+
+指定飞书：
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "heartbeat": {
+        "every": "30m",
+        "target": "feishu",
+        "accountId": "xiao-niu" // Agent ID
+      }
+    }
+  }
+}
+```
+
+几个实用配置项：
+
+| 配置项         | 说明                                                 |
+| -------------- | ---------------------------------------------------- |
+| every          | 心跳间隔                                             |
+| activeHours    | 只在某时间段内触发（比如 08:00~24:00，避免半夜打扰） |
+| model          | 心跳用更便宜的模型跑，省 token                       |
+| target: "none" | 只运行不发消息，纯后台                               |
+
+比如只在白天每小时检查一次：
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "heartbeat": {
+        "every": "1h",
+        "target": "last",
+        "activeHours": { "start": "08:00", "end": "22:00" }
+      }
+    }
+  }
+}
+```
