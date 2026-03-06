@@ -83,10 +83,12 @@ openclaw memory search "今天发生了什么" --agent main
     "feishu": {
       "groupPolicy": "allowlist",
       // Feishu group IDs (chat_id) look like: oc_xxx
+      // ["*"] means all
       "groupAllowFrom": ["oc_xxx"],
       "groups": {
         "oc_xxx": {
           // Feishu user IDs (open_id) look like: ou_xxx
+          // ["*"] means all
           "allowFrom": ["ou_user1", "ou_user2"],
           "requireMention": false
         }
@@ -195,3 +197,56 @@ target 的三类选项：
   }
 }
 ```
+
+## Session
+
+───
+
+配置方式：
+
+```json
+// ~/.openclaw/openclaw.json
+{
+  "session": {
+    "dmScope": "per-channel-peer"
+  }
+}
+```
+
+───
+
+Session Key 是怎么生成的
+
+OpenClaw 根据 session.dmScope 决定 direct message 映射到哪个 session key：
+
+| dmScope          | DM session key 格式                  |
+| ---------------- | ------------------------------------ |
+| main（默认）     | agent:<id>:main                      |
+| per-channel-peer | agent:<id>:<channel>:direct:<peerId> |
+| per-peer         | agent:<id>:dm:<peerId>               |
+
+如果你的 openclaw.json 设置的是 per-channel-peer，飞书来的私信会生成 agent:xiao-niu:feishu:direct:ou_xxx 这种独立 key。
+
+───
+
+那 `agent:<id>:main` 从哪来？
+
+main session 是 OpenClaw 在某些场景下默认保留的 fallback session，比如：
+
+• 早期创建时 dmScope 是 main（后来改成 per-channel-peer，但历史记录还在）
+• 通过 sessions_send 主动向 xiao-niu 发消息时，会用到 main
+• 其他 agent（比如我）通过 API 发消息给 xiao-niu，默认落到 main
+
+───
+
+关键差异对比
+
+| 特性     | agent:xiao-niu:main            | agent:xiao-niu:feishu:direct:ou_xxx |
+| -------- | ------------------------------ | ----------------------------------- |
+| 来源     | 程序内部 / 跨 agent 通信       | 真实用户从飞书发来的消息            |
+| 回复路由 | 发给 ou_xxx（deliveryContext） | 发给 ou_xxx（deliveryContext）      |
+| 上下文   | 独立历史记录                   | 独立历史记录                        |
+| 隔离性   | ❌ 如果多人用 main 则共享！    | ✅ 每个用户独立隔离                 |
+| 使用场景 | agent-to-agent 通信            | 用户日常对话                        |
+
+───
