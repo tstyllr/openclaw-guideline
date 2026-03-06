@@ -58,11 +58,32 @@
 
 ## memory_search vs memory_get
 
-|          | memory_search          | memory_get             |
-| -------- | ---------------------- | ---------------------- |
-| 方式     | 语义搜索，返回相关片段 | 精确读取指定文件/行    |
-| 适合场景 | 问题模糊，主题相关     | 已知具体文件路径和行号 |
-| 触发时机 | 问历史相关问题时       | 直接读取某个记忆文件   |
+|          | memory_search                      | memory_get               |
+| -------- | ---------------------------------- | ------------------------ |
+| 本质     | 语义搜索                           | 文件读取                 |
+| 输入     | 自然语言查询                       | 文件路径 + 可选行范围    |
+| 输出     | 多个相关片段 + 评分                | 指定文件的完整文本       |
+| 适合场景 | 不知道在哪个文件，按主题找         | 已知具体文件路径和行号   |
+| 触发时机 | 问题模糊、主题相关                 | 直接读取某个记忆文件     |
+| 路径限制 | 无需指定路径                       | 只能读 `MEMORY.md` 或 `memory/` 内的文件 |
+
+### 两步工作流（常见模式）
+
+`memory_search` 找到线索后，用 `memory_get` 读取完整内容：
+
+```
+memory_search("ACP 配置")
+  → 返回：memory/2026-03-06-acp-setup.md 第 5-20 行有相关内容
+    → memory_get("memory/2026-03-06-acp-setup.md", from=5, lines=20)
+        → 读取完整内容
+```
+
+`memory_search` 每个片段上限约 700 字符，想看完整上下文时用 `memory_get` 补读。
+
+### 一句话区别
+
+> **memory_search** = 图书馆检索系统（不知道书在哪，按主题找）  
+> **memory_get** = 直接去书架取书（知道在哪，直接拿）
 
 ---
 
@@ -130,15 +151,31 @@ minScore     可选，相似度阈值（0~1）
 ### 使用本地模型（离线，免费）
 
 ```json5
-agents: {
-  defaults: {
-    memorySearch: {
-      provider: "local",
-      local: {
-        modelPath: "hf:ggml-org/embeddinggemma-300m-qat-q8_0-GGUF/embeddinggemma-300m-qat-Q8_0.gguf"
-      }
-    }
-  }
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        provider: "local",
+      },
+    },
+  },
+}
+```
+
+也可以指定模型：
+
+```json5
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        provider: "local",
+        local: {
+          modelPath: "hf:ggml-org/embeddinggemma-300m-qat-q8_0-GGUF/embeddinggemma-300m-qat-Q8_0.gguf",
+        },
+      },
+    },
+  },
 }
 ```
 
@@ -147,28 +184,32 @@ agents: {
 ### 使用 OpenAI
 
 ```json5
-agents: {
-  defaults: {
-    memorySearch: {
-      provider: "openai",
-      model: "text-embedding-3-small"
-    }
-  }
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        provider: "openai",
+        model: "text-embedding-3-small",
+      },
+    },
+  },
 }
 ```
 
 ### 扩展索引目录（extraPaths）
 
 ```json5
-agents: {
-  defaults: {
-    memorySearch: {
-      extraPaths: [
-        "../team-docs",                    // workspace 相对路径
-        "/srv/shared-notes/overview.md"    // 绝对路径（单个文件）
-      ]
-    }
-  }
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        extraPaths: [
+          "../team-docs", // workspace 相对路径
+          "/srv/shared-notes/overview.md", // 绝对路径（单个文件）
+        ],
+      },
+    },
+  },
 }
 ```
 
@@ -181,10 +222,12 @@ agents: {
 ### 完全关闭 memory search
 
 ```json5
-plugins: {
-  slots: {
-    memory: "none"
-  }
+{
+  plugins: {
+    slots: {
+      memory: "none",
+    },
+  },
 }
 ```
 
