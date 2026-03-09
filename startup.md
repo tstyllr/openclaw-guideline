@@ -46,19 +46,30 @@ openclaw channels add --channel telegram --token xxx --account xiao-niu
 // ~/.openclaw/openclaw.json
 {
   "models": {
-    "anthropic/claude-opus-4-6": {},
-    "anthropic/claude-sonnet-4-6": {},
-    "anthropic/claude-haiku-4-5": {},
-    "minimax-cn/MiniMax-M2.5": {
-      "alias": "Minimax"
+    "anthropic/claude-opus-4-6": {
+      "alias": "opus"
     },
-    "minimax-cn/MiniMax-M2.5-highspeed": {
-      "alias": "Minimax-highspeed"
+    "anthropic/claude-sonnet-4-6": {
+      "alias": "sonnet"
     },
-    "openrouter/auto": {
-      "alias": "OpenRouter"
+    "anthropic/claude-haiku-4-5": {
+      "alias": "haiku"
     },
-    "openrouter/google/gemini-3.1-pro-preview": {}
+    "openai-codex/gpt-5.4": {
+      "alias": "gpt"
+    },
+    "openrouter/google/gemini-3.1-pro-preview": {
+      "alias": "gemini"
+    },
+    "openrouter/minimax/minimax-m2.5": {
+      "alias": "minimax"
+    },
+    "openrouter/moonshotai/kimi-k2.5": {
+      "alias": "kimi"
+    },
+    "openrouter/z-ai/glm-5": {
+      "alias": "glm"
+    }
   }
 }
 ```
